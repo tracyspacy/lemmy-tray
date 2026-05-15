@@ -1,6 +1,7 @@
 mod api;
 mod app;
 mod config;
+mod errors;
 mod post;
 mod tray;
 

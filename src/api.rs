@@ -1,4 +1,5 @@
 use crate::config::ApiConfig;
+use crate::errors::Errors;
 use crate::post::{ApiResponse, Post};
 
 pub struct ApiClient {
@@ -13,17 +14,20 @@ impl ApiClient {
             api_config,
         }
     }
-    //Todo:add error handling
-    pub fn get_post(&self) -> Post {
+
+    pub fn get_post(&self) -> Result<Post, Errors> {
         let mut response: ApiResponse = self
             .client
             .get(self.api_config.build_url())
             .call()
-            .unwrap()
+            .map_err(|e| Errors::GetPostCall(e.to_string()))?
             .body_mut()
             .read_json()
-            .unwrap();
+            .map_err(|e| Errors::GetPostRead(e.to_string()))?;
 
-        (&response.posts.remove(0)).into()
+        if response.posts.is_empty() {
+            return Err(Errors::GetPostEmptyResponse);
+        }
+        Ok((&response.posts.remove(0)).into())
     }
 }

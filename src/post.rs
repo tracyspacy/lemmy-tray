@@ -38,7 +38,7 @@ pub struct Post {
     pub full_title: String,
     pub short_title: String,
     pub community: String,
-    pub url: String,
+    pub url: Option<String>,
     pub counts: Counts,
 }
 
@@ -51,7 +51,7 @@ impl From<&PostView> for Post {
                 &post_view.community.name,
                 &post_view.community.actor_id,
             ),
-            url: post_view.post.ap_id.clone(),
+            url: Some(post_view.post.ap_id.clone()),
             counts: Counts {
                 upvotes: post_view.counts.upvotes,
                 downvotes: post_view.counts.downvotes,
@@ -62,6 +62,19 @@ impl From<&PostView> for Post {
 }
 
 impl Post {
+    pub fn placeholder_post(msg: &str) -> Self {
+        Self {
+            full_title: msg.to_string(),
+            short_title: msg.to_string(),
+            community: String::new(),
+            url: None,
+            counts: Counts {
+                upvotes: 0,
+                downvotes: 0,
+                comments: 0,
+            },
+        }
+    }
     //helpers
     fn prepare_short_title(full_title: &str) -> String {
         if full_title.len() > DEFAULT_TITLE_LEN {
