@@ -9,6 +9,7 @@ A lightweight menu bar (system tray) app for Lemmy.
 - Shows basic information about post: upvotes, downvotes, amount of comments etc in tray menu.
 - Opens link to post if clicked.
 - Sort type and listing (local/all) can be selected in app settings
+- **no account is required**
 
 
 ### Build
