@@ -84,7 +84,7 @@ impl Post {
                 .collect::<String>()
                 + "..."
         } else {
-            //maybe fill with sapces if short, so every title have same len
+            //maybe fill with spaces if short, so every title have same len
             full_title.to_string()
         }
     }
