@@ -3,34 +3,19 @@ const DEFAULT_INSTANCE: &str = "https://lemmy.ml";
 const DEFAULT_LIMIT: u8 = 1;
 pub const DEFAULT_TITLE_LEN: usize = 27;
 pub const DEFAULT_REFRESH_TICK: u64 = 60;
+
+#[derive(strum_macros::EnumString, strum_macros::Display)]
 pub enum ListingType {
     All,
     Local,
 }
-impl ListingType {
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::All => "All",
-            Self::Local => "Local",
-        }
-    }
-}
+
+#[derive(strum_macros::EnumString, strum_macros::Display)]
 pub enum SortType {
     New,
     Active,
     Hot,
     TopDay, //later add more
-}
-
-impl SortType {
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::New => "New",
-            Self::Active => "Active",
-            Self::Hot => "Hot",
-            Self::TopDay => "TopDay",
-        }
-    }
 }
 
 pub struct ApiConfig {
@@ -52,10 +37,7 @@ impl ApiConfig {
     pub fn build_url(&self) -> String {
         format!(
             "{}/api/v3/post/list?type_={}&sort={}&limit={}",
-            self.instance,
-            self.listing_type.as_str(),
-            self.sort_type.as_str(),
-            DEFAULT_LIMIT
+            self.instance, self.listing_type, self.sort_type, DEFAULT_LIMIT
         )
     }
 }
