@@ -1,7 +1,19 @@
 use crate::config::{ListingType, SortType};
 use crate::post::Post;
-
+use strum_macros::EnumString;
 use tray_icon::menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu};
+
+//probably serialize in snake case?
+#[derive(Debug, EnumString, strum_macros::Display)]
+pub enum MenuActiveItemId {
+    Quit,
+    PostTitle,
+    SortHot,
+    SortActive,
+    SortNew,
+    ListingAll,
+    ListingLocal,
+}
 
 #[allow(unused)]
 pub struct Tray {
@@ -22,8 +34,8 @@ impl Tray {
     pub fn new() -> Self {
         let menu = Menu::new();
         let logo = MenuItem::new("🅻🅴🅼🅼🆈 ⚞ • ⚟ 🆃🆁🅰🆈", false, None);
-        let quit = MenuItem::new("Quit", true, None);
-        let post_title = MenuItem::new("Loading", true, None);
+        let quit = MenuItem::with_id(MenuActiveItemId::Quit, "Quit", true, None);
+        let post_title = MenuItem::with_id(MenuActiveItemId::PostTitle, "Loading", true, None);
         let post_origin = MenuItem::new(format!("⚑ {} ", "Loading"), false, None);
         let post_counts = MenuItem::new(format!("✉ {} ⬆ {} ⬇ {}", "-", "-", "-"), false, None);
 
@@ -31,12 +43,22 @@ impl Tray {
         let sort_options = Submenu::new("Sort", true);
         let listing_options = Submenu::new("Listing", true);
 
-        let sort_hot = CheckMenuItem::new("Sort Hot", true, true, None);
-        let sort_active = CheckMenuItem::new("Sort Active", true, false, None);
-        let sort_new = CheckMenuItem::new("Sort New", true, false, None);
+        let sort_hot =
+            CheckMenuItem::with_id(MenuActiveItemId::SortHot, "Sort Hot", true, true, None);
+        let sort_active = CheckMenuItem::with_id(
+            MenuActiveItemId::SortActive,
+            "Sort Active",
+            true,
+            false,
+            None,
+        );
+        let sort_new =
+            CheckMenuItem::with_id(MenuActiveItemId::SortNew, "Sort New", true, false, None);
 
-        let listing_all = CheckMenuItem::new("All", true, true, None);
-        let listing_local = CheckMenuItem::new("Local", true, false, None);
+        let listing_all =
+            CheckMenuItem::with_id(MenuActiveItemId::ListingAll, "All", true, true, None);
+        let listing_local =
+            CheckMenuItem::with_id(MenuActiveItemId::ListingLocal, "Local", true, false, None);
 
         let _ = sort_options.append_items(&[&sort_hot, &sort_active, &sort_new]);
         let _ = listing_options.append_items(&[&listing_all, &listing_local]);

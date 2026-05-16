@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use crate::api::ApiClient;
 use crate::config::{ApiConfig, ListingType, SortType};
 use crate::errors::Errors;
 use crate::post::Post;
-use crate::tray::Tray;
+use crate::tray::{MenuActiveItemId, Tray};
 use tao::{
     event::Event,
     event_loop::{ControlFlow, EventLoop},
@@ -62,43 +64,44 @@ impl App {
     }
 
     fn handle_menu_event(&mut self, m_event: MenuEvent, control_flow: &mut ControlFlow) {
-        let event_id = &m_event.id;
-        if event_id == self.tray.quit.id() {
-            self.tray_icon.take();
-            *control_flow = ControlFlow::Exit;
-        }
-
-        if event_id == self.tray.post_title.id()
-            && let Some(url) = &self.post.url
-        {
-            let _ = open::that(url);
-        }
-
-        if event_id == self.tray.sort_hot.id() {
-            self.client.api_config.sort_type = SortType::Hot;
-            self.tray
-                .set_sort_checked(&self.client.api_config.sort_type);
-        }
-        if event_id == self.tray.sort_active.id() {
-            self.client.api_config.sort_type = SortType::Active;
-            self.tray
-                .set_sort_checked(&self.client.api_config.sort_type);
-        }
-        if event_id == self.tray.sort_new.id() {
-            self.client.api_config.sort_type = SortType::New;
-            self.tray
-                .set_sort_checked(&self.client.api_config.sort_type);
-        }
-
-        if event_id == self.tray.listing_all.id() {
-            self.client.api_config.listing_type = ListingType::All;
-            self.tray
-                .set_listing_checked(&self.client.api_config.listing_type);
-        }
-        if event_id == self.tray.listing_local.id() {
-            self.client.api_config.listing_type = ListingType::Local;
-            self.tray
-                .set_listing_checked(&self.client.api_config.listing_type);
+        let Ok(event_id) = MenuActiveItemId::from_str(m_event.id.0.as_str()) else {
+            return;
+        };
+        match event_id {
+            MenuActiveItemId::Quit => {
+                self.tray_icon.take();
+                *control_flow = ControlFlow::Exit;
+            }
+            MenuActiveItemId::PostTitle => {
+                if let Some(url) = &self.post.url {
+                    let _ = open::that(url);
+                }
+            }
+            MenuActiveItemId::SortHot => {
+                self.client.api_config.sort_type = SortType::Hot;
+                self.tray
+                    .set_sort_checked(&self.client.api_config.sort_type);
+            }
+            MenuActiveItemId::SortActive => {
+                self.client.api_config.sort_type = SortType::Active;
+                self.tray
+                    .set_sort_checked(&self.client.api_config.sort_type);
+            }
+            MenuActiveItemId::SortNew => {
+                self.client.api_config.sort_type = SortType::New;
+                self.tray
+                    .set_sort_checked(&self.client.api_config.sort_type);
+            }
+            MenuActiveItemId::ListingAll => {
+                self.client.api_config.listing_type = ListingType::All;
+                self.tray
+                    .set_listing_checked(&self.client.api_config.listing_type);
+            }
+            MenuActiveItemId::ListingLocal => {
+                self.client.api_config.listing_type = ListingType::Local;
+                self.tray
+                    .set_listing_checked(&self.client.api_config.listing_type);
+            }
         }
     }
 

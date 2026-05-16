@@ -9,3 +9,5 @@ tray-icon = "0.24.0"
 tao = "0.35.2"
 open = "5"
 ureq = {version="3.3.0",features=["json","rustls"], default-features=false}
+strum = "0.28"
+strum_macros = "0.28"
