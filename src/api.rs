@@ -28,6 +28,6 @@ impl ApiClient {
         if response.posts.is_empty() {
             return Err(Errors::GetPostEmptyResponse);
         }
-        Ok((&response.posts.remove(0)).into())
+        Ok((response.posts.remove(0)).into())
     }
 }

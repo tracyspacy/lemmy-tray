@@ -42,16 +42,17 @@ pub struct Post {
     pub counts: Counts,
 }
 
-impl From<&PostView> for Post {
-    fn from(post_view: &PostView) -> Self {
+impl From<PostView> for Post {
+    fn from(post_view: PostView) -> Self {
+        let short_title = Self::prepare_short_title(&post_view.post.name);
         Self {
-            full_title: post_view.post.name.clone(),
-            short_title: Self::prepare_short_title(&post_view.post.name),
+            full_title: post_view.post.name,
+            short_title,
             community: Self::prepare_community(
                 &post_view.community.name,
                 &post_view.community.actor_id,
             ),
-            url: Some(post_view.post.ap_id.clone()),
+            url: Some(post_view.post.ap_id),
             counts: Counts {
                 upvotes: post_view.counts.upvotes,
                 downvotes: post_view.counts.downvotes,
@@ -76,17 +77,23 @@ impl Post {
         }
     }
     //helpers
+    //maybe fill with spaces if short, so every title have same len
     fn prepare_short_title(full_title: &str) -> String {
-        if full_title.len() > DEFAULT_TITLE_LEN {
-            full_title
-                .chars()
-                .take(DEFAULT_TITLE_LEN)
-                .collect::<String>()
-                + "..."
-        } else {
-            //maybe fill with spaces if short, so every title have same len
-            full_title.to_string()
+        let mut chars = full_title.chars().peekable();
+        let mut short_title = String::with_capacity(DEFAULT_TITLE_LEN);
+        for _ in 0..DEFAULT_TITLE_LEN {
+            match chars.next() {
+                Some(char) => short_title.push(char),
+                None => return short_title,
+            }
         }
+        if chars.peek().is_some() {
+            for _ in 0..3 {
+                short_title.pop();
+            }
+            short_title.push_str("...");
+        }
+        short_title
     }
 
     fn prepare_community(community_name: &str, instance: &str) -> String {
