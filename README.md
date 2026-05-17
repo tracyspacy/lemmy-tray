@@ -16,9 +16,15 @@ A lightweight menu bar (system tray) app for Lemmy.
 ```cargo build --release``` 
 ```./target/release/lemmy-tray```
 
+### Configuration
+Edit `config.toml` file in the project root.
+```toml
+instance = "lemmy.ml"       # instance address here
+listing_type = "Local"      # listing type: Local or All
+sort_type = "Scaled"        # sorting types: New, Active, Hot, TopDay, TopHour, NewComments, Scaled, Controversial
+```
+If configs are invalid, default configs will be used.
 
 ### Platforms
 Tested on MacOs only, but probably may work on Linux/Win as well
 
-### Note
-No config file yet, no easy way to change default settings.
