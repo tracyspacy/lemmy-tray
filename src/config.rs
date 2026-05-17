@@ -15,7 +15,11 @@ pub enum SortType {
     New,
     Active,
     Hot,
-    TopDay, //later add more
+    TopDay, //do we need this?
+    TopHour,
+    NewComments,
+    Scaled,
+    Controversial, //later add more?
 }
 
 pub struct ApiConfig {

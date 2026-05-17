@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::api::ApiClient;
-use crate::config::{ApiConfig, ListingType, SortType};
+use crate::config::ApiConfig;
 use crate::errors::Errors;
 use crate::post::Post;
 use crate::tray::{MenuActiveItemId, Tray};
@@ -77,28 +77,13 @@ impl App {
                     let _ = open::that(url);
                 }
             }
-            MenuActiveItemId::SortHot => {
-                self.client.api_config.sort_type = SortType::Hot;
+            MenuActiveItemId::Sort(sort_type) => {
+                self.client.api_config.sort_type = sort_type;
                 self.tray
                     .set_sort_checked(&self.client.api_config.sort_type);
             }
-            MenuActiveItemId::SortActive => {
-                self.client.api_config.sort_type = SortType::Active;
-                self.tray
-                    .set_sort_checked(&self.client.api_config.sort_type);
-            }
-            MenuActiveItemId::SortNew => {
-                self.client.api_config.sort_type = SortType::New;
-                self.tray
-                    .set_sort_checked(&self.client.api_config.sort_type);
-            }
-            MenuActiveItemId::ListingAll => {
-                self.client.api_config.listing_type = ListingType::All;
-                self.tray
-                    .set_listing_checked(&self.client.api_config.listing_type);
-            }
-            MenuActiveItemId::ListingLocal => {
-                self.client.api_config.listing_type = ListingType::Local;
+            MenuActiveItemId::Listing(listing_type) => {
+                self.client.api_config.listing_type = listing_type;
                 self.tray
                     .set_listing_checked(&self.client.api_config.listing_type);
             }
