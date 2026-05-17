@@ -23,7 +23,11 @@ pub struct App {
 }
 impl App {
     pub fn new() -> Self {
-        let client = ApiClient::new(ApiConfig::default());
+        let api_config = ApiConfig::load_config().unwrap_or_else(|e| {
+            eprintln!("{:?}", e);
+            ApiConfig::default()
+        });
+        let client = ApiClient::new(api_config);
         let tray = Tray::new(&client.api_config);
         let post = match client.get_post() {
             Ok(post) => post,

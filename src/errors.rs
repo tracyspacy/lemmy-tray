@@ -4,6 +4,8 @@ pub enum Errors {
     GetPostRead(String),
     GetPostEmptyResponse,
     TrayIcon(String),
+    FailedToReadConfig,
+    FailedToParseConfig,
 }
 
 // Display for Errors instead?
@@ -23,6 +25,14 @@ impl Errors {
             Self::TrayIcon(e) => {
                 eprintln!("{e}");
                 "⚠ Unable to init tray icon"
+            }
+            Self::FailedToReadConfig => {
+                eprintln!("{:?}", self);
+                "⚠ No Config File found!"
+            }
+            Self::FailedToParseConfig => {
+                eprintln!("{:?}", self);
+                "⚠ Wrong Config!"
             }
         }
     }

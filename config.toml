@@ -1,0 +1,3 @@
+instance = "lemmy.ml"       # instance address here
+listing_type = "Local"      # listing type: Local or All
+sort_type = "Active"        # sorting types: New, Active, Hot, TopDay, TopHour, NewComments, Scaled, Controversial

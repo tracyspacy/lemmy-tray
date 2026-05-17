@@ -11,3 +11,4 @@ open = "5"
 ureq = {version="3.3.0",features=["json","rustls"], default-features=false}
 strum = "0.28"
 strum_macros = "0.28"
+toml = "1.1.2"
