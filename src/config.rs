@@ -4,13 +4,29 @@ const DEFAULT_LIMIT: u8 = 1;
 pub const DEFAULT_TITLE_LEN: usize = 27;
 pub const DEFAULT_REFRESH_TICK: u64 = 60;
 
-#[derive(strum_macros::EnumString, strum_macros::Display)]
+#[derive(
+    strum_macros::EnumIter,
+    strum_macros::EnumString,
+    strum_macros::Display,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+)]
 pub enum ListingType {
     All,
     Local,
 }
 
-#[derive(strum_macros::EnumString, strum_macros::Display)]
+#[derive(
+    strum_macros::EnumIter,
+    strum_macros::EnumString,
+    strum_macros::Display,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+)]
 pub enum SortType {
     New,
     Active,

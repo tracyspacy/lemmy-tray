@@ -23,8 +23,8 @@ pub struct App {
 }
 impl App {
     pub fn new() -> Self {
-        let tray = Tray::new();
         let client = ApiClient::new(ApiConfig::default());
+        let tray = Tray::new(&client.api_config);
         let post = match client.get_post() {
             Ok(post) => post,
             Err(e) => Post::placeholder_post(e.error_msg()),
