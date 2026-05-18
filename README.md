@@ -19,9 +19,14 @@ A lightweight menu bar (system tray) app for Lemmy.
 ### Configuration
 Edit `config.toml` file in the project root.
 ```toml
+[api_config]
 instance = "lemmy.ml"       # instance address here
-listing_type = "Local"      # listing type: Local or All
-sort_type = "Scaled"        # sorting types: New, Active, Hot, TopDay, TopHour, NewComments, Scaled, Controversial
+listing_type = "Local"      # listing types: Local or All
+sort_type = "Active"        # sorting types: New, Active, Hot, TopDay, TopHour, NewComments, Scaled, Controversial
+
+[app_config]
+title_len_chars = 27        # length of title you will see in menu bar/ tray icon, default value is 27 chars
+refresh_tick_sec = 60       # refresh interval, default value is 60 seconds
 ```
 If configs are invalid, default configs will be used.
 
