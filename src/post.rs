@@ -14,8 +14,8 @@ pub struct PostView {
 
 #[derive(Deserialize, Debug)]
 struct PostData {
+    id: u64,
     name: String,
-    ap_id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -29,7 +29,7 @@ pub struct Counts {
     // score: i64,
     pub upvotes: i64,
     pub downvotes: i64,
-    pub comments: i64,
+    pub comments: u64,
 }
 
 #[derive(Debug)]
@@ -56,7 +56,7 @@ impl Post {
         }
     }
     //helpers
-    pub fn from_post_view(post_view: PostView, short_title_len: usize) -> Self {
+    pub fn from_post_view(post_view: PostView, short_title_len: usize, instance_url: &str) -> Self {
         let short_title = Self::prepare_short_title(&post_view.post.name, short_title_len);
         Self {
             full_title: post_view.post.name,
@@ -65,7 +65,7 @@ impl Post {
                 &post_view.community.name,
                 &post_view.community.actor_id,
             ),
-            url: Some(post_view.post.ap_id),
+            url: Some(Self::prepare_post_url(instance_url, post_view.post.id)),
             counts: Counts {
                 upvotes: post_view.counts.upvotes,
                 downvotes: post_view.counts.downvotes,
@@ -99,5 +99,8 @@ impl Post {
             community_name,
             instance.split('/').nth(2).unwrap_or("unknown instance")
         )
+    }
+    fn prepare_post_url(instance_url: &str, post_id: u64) -> String {
+        format!("https://{}/post/{}", instance_url, post_id)
     }
 }

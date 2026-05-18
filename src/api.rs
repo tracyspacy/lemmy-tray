@@ -31,6 +31,7 @@ impl ApiClient {
         Ok(Post::from_post_view(
             response.posts.remove(0),
             short_title_len,
+            &self.api_config.instance,
         ))
     }
 }
