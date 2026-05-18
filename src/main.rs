@@ -6,11 +6,16 @@ mod post;
 mod tray;
 
 use app::{App, UserEvent};
-use config::DEFAULT_REFRESH_TICK;
+use config::Configs;
 use tao::event_loop::EventLoopBuilder;
 use tray_icon::menu::MenuEvent;
 
 fn main() {
+    let configs = Configs::load_configs().unwrap_or_else(|e| {
+        eprintln!("{:?}", e);
+        Configs::default()
+    });
+
     let mut event_loop = EventLoopBuilder::<UserEvent>::with_user_event().build();
 
     // set a menu event handler that forwards the event and wakes up the event loop
@@ -20,10 +25,10 @@ fn main() {
     }));
 
     let proxy = event_loop.create_proxy();
-
+    let refresh_tick = configs.app_config.refresh_tick_sec;
     std::thread::spawn(move || {
         loop {
-            std::thread::sleep(std::time::Duration::from_secs(DEFAULT_REFRESH_TICK));
+            std::thread::sleep(std::time::Duration::from_secs(refresh_tick));
             let _ = proxy.send_event(UserEvent::RefreshTick);
         }
     });
@@ -32,5 +37,5 @@ fn main() {
         use tao::platform::macos::{ActivationPolicy, EventLoopExtMacOS};
         event_loop.set_activation_policy(ActivationPolicy::Accessory);
     }
-    App::new().run(event_loop);
+    App::new(configs).run(event_loop);
 }

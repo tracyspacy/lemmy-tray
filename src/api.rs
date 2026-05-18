@@ -15,7 +15,7 @@ impl ApiClient {
         }
     }
 
-    pub fn get_post(&self) -> Result<Post, Errors> {
+    pub fn get_post(&self, short_title_len: usize) -> Result<Post, Errors> {
         let mut response: ApiResponse = self
             .client
             .get(self.api_config.build_url())
@@ -28,6 +28,9 @@ impl ApiClient {
         if response.posts.is_empty() {
             return Err(Errors::GetPostEmptyResponse);
         }
-        Ok((response.posts.remove(0)).into())
+        Ok(Post::from_post_view(
+            response.posts.remove(0),
+            short_title_len,
+        ))
     }
 }

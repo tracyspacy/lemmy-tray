@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::api::ApiClient;
-use crate::config::ApiConfig;
+use crate::config::{AppConfig, Configs};
 use crate::errors::Errors;
 use crate::post::Post;
 use crate::tray::{MenuActiveItemId, Tray};
@@ -20,16 +20,13 @@ pub struct App {
     tray: Tray,
     post: Post,
     tray_icon: Option<TrayIcon>,
+    configs: AppConfig,
 }
 impl App {
-    pub fn new() -> Self {
-        let api_config = ApiConfig::load_config().unwrap_or_else(|e| {
-            eprintln!("{:?}", e);
-            ApiConfig::default()
-        });
-        let client = ApiClient::new(api_config);
+    pub fn new(configs: Configs) -> Self {
+        let client = ApiClient::new(configs.api_config);
         let tray = Tray::new(&client.api_config);
-        let post = match client.get_post() {
+        let post = match client.get_post(configs.app_config.title_len_chars) {
             Ok(post) => post,
             Err(e) => Post::placeholder_post(e.error_msg()),
         };
@@ -40,6 +37,7 @@ impl App {
             tray,
             post,
             tray_icon: None,
+            configs: configs.app_config,
         }
     }
 
@@ -56,7 +54,7 @@ impl App {
     }
 
     fn refresh(&mut self) {
-        self.post = match self.client.get_post() {
+        self.post = match self.client.get_post(self.configs.title_len_chars) {
             Ok(post) => post,
             Err(e) => Post::placeholder_post(e.error_msg()),
         };

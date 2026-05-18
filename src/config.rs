@@ -1,10 +1,9 @@
 use crate::errors::Errors;
 use serde::Deserialize;
 const DEFAULT_INSTANCE: &str = "lemmy.ml";
-//const DEFAULT_INSTANCE: &str = "http://localhost:8536";
 const DEFAULT_LIMIT: u8 = 1;
-pub const DEFAULT_TITLE_LEN: usize = 27;
-pub const DEFAULT_REFRESH_TICK: u64 = 60;
+const DEFAULT_TITLE_LEN: usize = 27;
+const DEFAULT_REFRESH_TICK: u64 = 60;
 
 #[derive(
     strum_macros::EnumIter,
@@ -45,11 +44,38 @@ pub enum SortType {
 }
 
 // todo - specify config path for binaries
-fn parse_config() -> Result<ApiConfig, Errors> {
+fn parse_config() -> Result<Configs, Errors> {
     let config_str =
         std::fs::read_to_string("config.toml").map_err(|_| Errors::FailedToReadConfig)?;
-    let config: ApiConfig = toml::from_str(&config_str).map_err(|_| Errors::FailedToParseConfig)?;
+    let config: Configs = toml::from_str(&config_str).map_err(|_| Errors::FailedToParseConfig)?;
     Ok(config)
+}
+
+#[derive(Deserialize, Default)]
+pub struct Configs {
+    pub api_config: ApiConfig,
+    pub app_config: AppConfig,
+}
+
+impl Configs {
+    pub fn load_configs() -> Result<Self, Errors> {
+        parse_config()
+    }
+}
+
+#[derive(Deserialize)]
+pub struct AppConfig {
+    pub title_len_chars: usize,
+    pub refresh_tick_sec: u64,
+}
+
+impl Default for AppConfig {
+    fn default() -> Self {
+        Self {
+            title_len_chars: DEFAULT_TITLE_LEN,
+            refresh_tick_sec: DEFAULT_REFRESH_TICK,
+        }
+    }
 }
 
 #[derive(Deserialize, Debug)]
@@ -69,10 +95,6 @@ impl Default for ApiConfig {
 }
 
 impl ApiConfig {
-    pub fn load_config() -> Result<Self, Errors> {
-        parse_config()
-    }
-
     pub fn build_url(&self) -> String {
         format!(
             "https://{}/api/v3/post/list?type_={}&sort={}&limit={}",

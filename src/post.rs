@@ -1,4 +1,3 @@
-use crate::config::DEFAULT_TITLE_LEN;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -42,26 +41,6 @@ pub struct Post {
     pub counts: Counts,
 }
 
-impl From<PostView> for Post {
-    fn from(post_view: PostView) -> Self {
-        let short_title = Self::prepare_short_title(&post_view.post.name);
-        Self {
-            full_title: post_view.post.name,
-            short_title,
-            community: Self::prepare_community(
-                &post_view.community.name,
-                &post_view.community.actor_id,
-            ),
-            url: Some(post_view.post.ap_id),
-            counts: Counts {
-                upvotes: post_view.counts.upvotes,
-                downvotes: post_view.counts.downvotes,
-                comments: post_view.counts.comments,
-            },
-        }
-    }
-}
-
 impl Post {
     pub fn placeholder_post(msg: &str) -> Self {
         Self {
@@ -77,11 +56,29 @@ impl Post {
         }
     }
     //helpers
+    pub fn from_post_view(post_view: PostView, short_title_len: usize) -> Self {
+        let short_title = Self::prepare_short_title(&post_view.post.name, short_title_len);
+        Self {
+            full_title: post_view.post.name,
+            short_title,
+            community: Self::prepare_community(
+                &post_view.community.name,
+                &post_view.community.actor_id,
+            ),
+            url: Some(post_view.post.ap_id),
+            counts: Counts {
+                upvotes: post_view.counts.upvotes,
+                downvotes: post_view.counts.downvotes,
+                comments: post_view.counts.comments,
+            },
+        }
+    }
+
     //maybe fill with spaces if short, so every title have same len
-    fn prepare_short_title(full_title: &str) -> String {
+    fn prepare_short_title(full_title: &str, short_title_len: usize) -> String {
         let mut chars = full_title.chars().peekable();
-        let mut short_title = String::with_capacity(DEFAULT_TITLE_LEN);
-        for _ in 0..DEFAULT_TITLE_LEN {
+        let mut short_title = String::with_capacity(short_title_len);
+        for _ in 0..short_title_len {
             match chars.next() {
                 Some(char) => short_title.push(char),
                 None => return short_title,
